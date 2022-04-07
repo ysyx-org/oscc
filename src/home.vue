@@ -39,10 +39,10 @@ const { host } = location
 			<btn type="solid gray" :to="`/redirect/to/ysyx.${host}`">
 				一生一芯计划
 			</btn>
-			<btn type="solid gray disabled" :to="'/redirect/to/'">
+			<btn type="solid gray disabled">
 				开源EDA
 			</btn>
-			<btn type="solid gray disabled" :to="'/redirect/to/'">
+			<btn type="solid gray disabled">
 				在线设计平台
 			</btn>
 		</container>
