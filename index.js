@@ -6,7 +6,7 @@ import { createApp, onMounted } from 'vue'
 import App from './src/index.vue'
 import { router } from './router'
 import { createPinia } from 'pinia'
-import * as componentList from '@CL/components'
+import * as componentList from './common.js'
 const Vue = createApp(App)
 	.use(router)
 	.use(createPinia())
