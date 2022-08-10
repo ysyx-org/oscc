@@ -36,7 +36,7 @@ const screenwidth = ref('800px')
 window.onresize = () => {
 	return (() => {
 		screenwidth.value =
-			(document.documentElement.clientWidth * 668) / 1620 + "px";
+			(100 * 668) / 1620 + "vw";
 	})();
 };
 </script>
@@ -45,7 +45,7 @@ window.onresize = () => {
 <template>
 	<div class="block text-center">
 		<span class="demonstration"></span>
-		<el-carousel :height="screenwidth" :interval="4000">
+		<el-carousel height="41.25vw" :interval="4000">
 			<el-carousel-item v-for="item in imageArray" :key="item">
 				<img :src="item" alt="展示图" class="el-carousel__item-img">
 			</el-carousel-item>
@@ -67,7 +67,23 @@ window.onresize = () => {
 		</div>
 	</div>
 	<h1 class="news">活动信息NEWS & EVENTS</h1>
-	<timeline :timeline-list="dongtai"></timeline>
+	<timeline :timeline-list="dongtai">
+		<div date="2022-01-01">
+			<img src="" alt="">
+			<h1>title</h1>
+			<p>111</p>
+		</div>
+		<div date="2022-02-03">
+			<img src="" alt="">
+			<h1>title</h1>
+			<p>111</p>
+		</div>
+		<div v-for="i in dongtai" :date="i.date">
+			<img src="" alt="">
+			<h1>title</h1>
+			<p>111</p>
+		</div>
+	</timeline>
 	<container w1280 round flex-column flex-center content-center>
 		<container flex-column flex-center content-center style="border-bottom: 1px solid var(--cb-gray-light)">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432.18 200"
@@ -161,7 +177,6 @@ window.onresize = () => {
 
 		.introduce-info {
 			display: flex;
-			flex: 25%;
 			margin: 20px;
 			flex-direction: column;
 			width: 375px;
