@@ -1,14 +1,14 @@
 <script setup>
 import timeline from './components/timeline/index.vue'
+import timelineCard from './components/timeline/card.vue'
 import { ref } from 'vue'
 const { host } = location
 const imageArray = [
 	new URL('./assets/bosc_1.jpg', import.meta.url).href,
 	new URL('./assets/bosc_2.jpg', import.meta.url).href,
 ]
-const dongtai = [
+const activities = [
 	{
-		id: 0,
 		date: "2022-02-01",
 		img: new URL("https://nwzimg.wezhan.cn/contents/sitefiles2055/10275816/images/31691341.png", import.meta.url).href,
 		title: "开芯院4月份谈芯沙龙活动回顾",
@@ -16,7 +16,6 @@ const dongtai = [
 		content: "研究院于2022年4月22日举办了谈芯沙龙活动。当天一早，在研究院首席科学家包云岗及研究院对外合作部总监董璐的带领下，开芯院员工及学生们来到中关村集成电路科技馆进行参观访问。",
 	},
 	{
-		id: 1,
 		date: "2022-03-04",
 		img: new URL('https://nwzimg.wezhan.cn/contents/sitefiles2055/10275816/images/31784047.jpg', import.meta.url).href,
 		title: "开芯院举办行业新闻午餐会活动",
@@ -24,7 +23,6 @@ const dongtai = [
 		content: '研究院于2022年4月22日举办了谈芯沙龙活动。当天一早，在研究院首席科学家包云岗及研究院对外合作部总监董璐的带领下，开芯院员工及学生们来到中关村集成电路科技馆进行参观访问。',
 	},
 	{
-		id: 2,
 		date: "2022-03-14",
 		img: new URL('./assets/bosc_2.jpg', import.meta.url).href,
 		title: "开芯院开展三八妇女节活动",
@@ -32,34 +30,31 @@ const dongtai = [
 		content: '研究院于2022年4月22科技馆进行参观访问。',
 	},
 ]
-const screenwidth = ref('800px')
-window.onresize = () => {
-	return (() => {
-		screenwidth.value =
-			(100 * 668) / 1620 + "vw";
-	})();
-};
 </script>
-
 
 <template>
 	<div class="block text-center">
 		<span class="demonstration"></span>
 		<el-carousel height="41.25vw" :interval="4000">
 			<el-carousel-item v-for="item in imageArray" :key="item">
-				<img :src="item" alt="展示图" class="el-carousel__item-img">
+				<img :src="item" alt="展示图" class="el-carousel__item-img" />
 			</el-carousel-item>
 		</el-carousel>
 	</div>
 	<div class="introduce-wrapper">
 		<div class="introduce-item">
 			<div class="img-content">
-				<img class="introduce-item-img"
-					src="https://nwzimg.wezhan.cn/contents/sitefiles2055/10275816/images/31691341.png" alt="研究院简介">
+				<img
+					class="introduce-item-img"
+					src="https://nwzimg.wezhan.cn/contents/sitefiles2055/10275816/images/31691341.png"
+					alt="研究院简介"
+				/>
 			</div>
 			<div class="introduce-info">
 				<div class="introduce-info-title">研究院简介</div>
-				<h3 class="introduce-info-subtitle">ABOUT RESEARCH INSTITUTE</h3>
+				<h3 class="introduce-info-subtitle">
+					ABOUT RESEARCH INSTITUTE
+				</h3>
 				<div class="introduce-info-text">
 					近年来，RISC-V快速发展，已经成为当前国际科技竞争的焦点。为提升我国集成电路设计水平，建设与国际开源社区对接的技术平台，北京市和中科院高度重视RISC-V发展，组织国内一批行业龙头企业和顶尖科研单位于2021年12月6日发起成立北京开源芯片研究院。研究院以开源开放凝聚产业发展共识，以协同创新激发应用牵引潜力，着力推进RISC-V创新链和产业链的加速融合，加速科技创新成果产业化落地，加快打造全球领先的RISC-V产业生态。
 				</div>
@@ -67,32 +62,42 @@ window.onresize = () => {
 		</div>
 	</div>
 	<h1 class="news">活动信息NEWS & EVENTS</h1>
-	<timeline :timeline-list="dongtai">
-		<div date="2022-01-01">
-			<img src="" alt="">
-			<h1>title</h1>
-			<p>111</p>
-		</div>
-		<div date="2022-02-03">
-			<img src="" alt="">
-			<h1>title</h1>
-			<p>111</p>
-		</div>
-		<div v-for="i in dongtai" :date="i.date">
-			<img src="" alt="">
-			<h1>title</h1>
-			<p>111</p>
-		</div>
+	<timeline style="margin: 2rem 0;" type="HB">
+		<timeline-card
+			v-for="(el, i) in activities"
+			:key="i"
+			:date="el.date"
+			:img="el.img"
+			:link="el.link"
+			:title="el.title"
+			:content="el.content"
+		/>
+		<div style="padding: 30px; border-radius: 10px; background-color: red;" date="red"></div>
+		<div style="padding: 20px; border-radius: 6px; background-color: blue;" date="blue"></div>
+		<div style="padding: 40px; border-radius: 18px; background-color: green;" date="green"></div>
+		<div style="padding: 10px; border-radius: 2px; background-color: yellow;" date="yellow"></div>
 	</timeline>
 	<container w1280 round flex-column flex-center content-center>
-		<container flex-column flex-center content-center style="border-bottom: 1px solid var(--cb-gray-light)">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432.18 200"
-				style="width: 20em; max-width: 60vw; margin-bottom: 20px">
+		<container
+			flex-column
+			flex-center
+			content-center
+			style="border-bottom: 1px solid var(--cb-gray-light)"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 432.18 200"
+				style="width: 20em; max-width: 60vw; margin-bottom: 20px"
+			>
 				<g>
-					<path oscc-logo-brand
-						d="M169.56,102.58l17.5-24.37C175,69.69,168,61.87,168,50c0-10.73,3.06-12.26,4.21-12.83C176.54,35,184.91,35,193,35c19.43,0,24,.63,24.84,10.1a5,5,0,0,0,5,4.57h20a5,5,0,0,0,5-5.35c-1.21-16.43-8.14-27.87-20.66-34.06C216.51,5,204,5,193,5s-23.54,0-34.21,5.33C145,17.23,138,30.58,138,50,138,75.35,153.11,90.85,169.56,102.58ZM308.36,68a60.72,60.72,0,0,1,91.41-14,4.74,4.74,0,0,0,6.46-.24l17.5-17.5a4.76,4.76,0,0,0-.22-6.92A94.67,94.67,0,0,0,358.08,5c-40.22.79-74.5,26.94-87.5,63H308ZM205.61,90.21l-17.53,24.41C206.71,126.38,218,134.92,218,150c0,10.73-3.06,12.26-4.21,12.83C209.46,165,201.09,165,193,165c-19.22,0-24-.72-24.84-10.46a5,5,0,0,0-5-4.54h-20a5,5,0,0,0-5,5.35c1.2,16.39,8.1,27.87,20.54,34.16C169.59,195,182.57,195,193,195c11,0,23.54,0,34.21-5.33C241,182.77,248,169.42,248,150,248,119.12,225.58,102.85,205.61,90.21ZM110,121a21,21,0,1,1,5-41.39c-.2-25-1.2-40.6-6.24-51.95C98.64,5,74.45,5,60,5S21.36,5,11.29,27.66C5,41.82,5,62.48,5,100s0,58.18,6.29,72.34C21.36,195,45.55,195,60,195s38.64,0,48.71-22.66c4.93-11.1,6-26.22,6.23-50.33l-1.25-1.34A20.75,20.75,0,0,1,110,121ZM81.29,160.16c-1,2.27-2.15,4.84-21.29,4.84s-20.28-2.57-21.29-4.84C35,151.82,35,131.2,35,100s0-51.82,3.71-60.16C39.72,37.57,40.86,35,60,35s20.28,2.57,21.29,4.84C85,48.18,85,68.8,85,100S85,151.82,81.29,160.16Zm342.44,3.57-17.5-17.5a4.73,4.73,0,0,0-6.44-.26A60.8,60.8,0,0,1,299.27,97.13,58.51,58.51,0,0,1,300,90.2H265.51q-.43,4.17-.5,8.45a95,95,0,0,0,158.51,72A4.76,4.76,0,0,0,423.73,163.73ZM174,123.91,202.54,84.2H305.93l19.53,19.91a4.91,4.91,0,0,0,3.54,1.5h17.09a15,15,0,1,0-.37-10.2H331.07L311.54,75.5A4.91,4.91,0,0,0,308,74H200a5,5,0,0,0-4,2.09l-28.5,39.71H131.14l-8-8.58a15,15,0,1,0-7.56,6.69l9.78,10.5A5,5,0,0,0,129,126h41A5,5,0,0,0,174,123.91Z" />
-					<path oscc-logo-orange
-						d="M327.94,67.94l9.65,9.64a5,5,0,0,0,6.36.59c15.51-11,42.41-3.71,42.84,21.83-.43,25.54-27.33,32.81-42.84,21.83a5,5,0,0,0-6.37.59l-9.64,9.64a5,5,0,0,0,.53,7.54c28.67,22.14,80.71,8.94,81.53-39.6-.81-48.54-52.86-61.74-81.53-39.6A5,5,0,0,0,327.94,67.94Z" />
+					<path
+						oscc-logo-brand
+						d="M169.56,102.58l17.5-24.37C175,69.69,168,61.87,168,50c0-10.73,3.06-12.26,4.21-12.83C176.54,35,184.91,35,193,35c19.43,0,24,.63,24.84,10.1a5,5,0,0,0,5,4.57h20a5,5,0,0,0,5-5.35c-1.21-16.43-8.14-27.87-20.66-34.06C216.51,5,204,5,193,5s-23.54,0-34.21,5.33C145,17.23,138,30.58,138,50,138,75.35,153.11,90.85,169.56,102.58ZM308.36,68a60.72,60.72,0,0,1,91.41-14,4.74,4.74,0,0,0,6.46-.24l17.5-17.5a4.76,4.76,0,0,0-.22-6.92A94.67,94.67,0,0,0,358.08,5c-40.22.79-74.5,26.94-87.5,63H308ZM205.61,90.21l-17.53,24.41C206.71,126.38,218,134.92,218,150c0,10.73-3.06,12.26-4.21,12.83C209.46,165,201.09,165,193,165c-19.22,0-24-.72-24.84-10.46a5,5,0,0,0-5-4.54h-20a5,5,0,0,0-5,5.35c1.2,16.39,8.1,27.87,20.54,34.16C169.59,195,182.57,195,193,195c11,0,23.54,0,34.21-5.33C241,182.77,248,169.42,248,150,248,119.12,225.58,102.85,205.61,90.21ZM110,121a21,21,0,1,1,5-41.39c-.2-25-1.2-40.6-6.24-51.95C98.64,5,74.45,5,60,5S21.36,5,11.29,27.66C5,41.82,5,62.48,5,100s0,58.18,6.29,72.34C21.36,195,45.55,195,60,195s38.64,0,48.71-22.66c4.93-11.1,6-26.22,6.23-50.33l-1.25-1.34A20.75,20.75,0,0,1,110,121ZM81.29,160.16c-1,2.27-2.15,4.84-21.29,4.84s-20.28-2.57-21.29-4.84C35,151.82,35,131.2,35,100s0-51.82,3.71-60.16C39.72,37.57,40.86,35,60,35s20.28,2.57,21.29,4.84C85,48.18,85,68.8,85,100S85,151.82,81.29,160.16Zm342.44,3.57-17.5-17.5a4.73,4.73,0,0,0-6.44-.26A60.8,60.8,0,0,1,299.27,97.13,58.51,58.51,0,0,1,300,90.2H265.51q-.43,4.17-.5,8.45a95,95,0,0,0,158.51,72A4.76,4.76,0,0,0,423.73,163.73ZM174,123.91,202.54,84.2H305.93l19.53,19.91a4.91,4.91,0,0,0,3.54,1.5h17.09a15,15,0,1,0-.37-10.2H331.07L311.54,75.5A4.91,4.91,0,0,0,308,74H200a5,5,0,0,0-4,2.09l-28.5,39.71H131.14l-8-8.58a15,15,0,1,0-7.56,6.69l9.78,10.5A5,5,0,0,0,129,126h41A5,5,0,0,0,174,123.91Z"
+					/>
+					<path
+						oscc-logo-orange
+						d="M327.94,67.94l9.65,9.64a5,5,0,0,0,6.36.59c15.51-11,42.41-3.71,42.84,21.83-.43,25.54-27.33,32.81-42.84,21.83a5,5,0,0,0-6.37.59l-9.64,9.64a5,5,0,0,0,.53,7.54c28.67,22.14,80.71,8.94,81.53-39.6-.81-48.54-52.86-61.74-81.53-39.6A5,5,0,0,0,327.94,67.94Z"
+					/>
 				</g>
 			</svg>
 			<h2 style="color: var(--ct-gray-light); margin-top: 10px">
@@ -109,9 +114,7 @@ window.onresize = () => {
 			<btn type="solid gray" :to="`/redirect/to/ieda.${host}`">
 				开源EDA
 			</btn>
-			<btn type="solid gray disabled">
-				在线设计平台
-			</btn>
+			<btn type="solid gray disabled"> 在线设计平台 </btn>
 		</container>
 	</container>
 	<v-footer />
@@ -144,7 +147,6 @@ window.onresize = () => {
 }
 
 .introduce-wrapper {
-
 	display: flex;
 	margin-top: 20px;
 	margin-bottom: 30px;
@@ -170,7 +172,7 @@ window.onresize = () => {
 
 				&:hover {
 					transform: scale(1.1);
-					transition: all .5s ease .1s;
+					transition: all 0.5s ease 0.1s;
 				}
 			}
 		}
