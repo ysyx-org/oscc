@@ -4,7 +4,6 @@ import { resolve, dirname } from 'path'
 import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 const entry = dirname(import.meta.url.replace(/^file:\/\//ig, ''))
-console.log({ entry })
 export default defineConfig({
 	plugins: [vue(), VitePWA()],
 	publicDir: 'common/public',
