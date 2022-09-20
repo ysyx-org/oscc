@@ -11,6 +11,7 @@ export { default as Redirect } from '@CC/Redirect.vue'
 export { default as Badge } from '@CC/Badge.vue'
 export { default as Btn } from '@CC/Button.vue'
 export { default as Tri } from '@CC/TriStateLink.vue'
+export { default as vCard } from '@CC/Card.vue'
 // User & Locale handlers (with possible http requests and other side effects)
 export { default as AlternatingDots } from '@CC/spinners/AlternatingDots.vue'
 export { default as ChasingCircle } from '@CC/spinners/ChasingCircle.vue'
