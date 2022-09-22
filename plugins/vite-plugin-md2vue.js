@@ -5,7 +5,7 @@ import matter from 'gray-matter'
 import fs from 'fs'
 import path from 'path'
 
-function genRawJson(dir) {
+function initMdObj(dir) {
 	const
 		mdObj = {},
 		files = fs.readdirSync(dir, { withFileTypes: true })
@@ -24,12 +24,10 @@ function genRawJson(dir) {
 export default function (dir) {
 	const
 		mdModuleId = 'mdDir',
-		// ensure virtual source is only
 		resolvedMdModuleId = '\0' + mdModuleId
 	return {
 		name: 'vitePluginMd2Vue',
 		enforce: 'pre',
-		// HMR
 		handleHotUpdate(ctx) {
 			const { file, server, modules } = ctx;
 			if (file.endsWith('.md') && file.startsWith(path.resolve(dir))) {
@@ -37,16 +35,14 @@ export default function (dir) {
 				return [...modules, relationModule]
 			}
 		},
-
 		resolveId(id) {
 			if (id === mdModuleId) {
 				return resolvedMdModuleId
 			}
 		},
-
 		load(id) {
 			if (id === resolvedMdModuleId) {
-				const mdObj = genRawJson(dir)
+				const mdObj = initMdObj(dir)
 				return {
 					code: `export default ${JSON.stringify(mdObj)};`,
 					map: null

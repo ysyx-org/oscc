@@ -2,27 +2,25 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import rawJson from 'mdDir'
-// import rawJson from './assets/ban'
+
 const
 	route = useRoute(),
-	isShow = ref(false),
+	showExpand = ref(false),
 	bgImg = computed(() => `url(${rawJson[route.params.name].banner})`),
 	sortByCom = {}
 
-// init sortByCom
-for (const name of Object.getOwnPropertyNames(rawJson)) {
-	const company = rawJson[name].company
-	if (!(company in sortByCom)) {
-		sortByCom[company] = {}
+for (const name in rawJson) {
+	if (!(rawJson[name].company in sortByCom)) {
+		sortByCom[rawJson[name].company] = {}
 	}
-	sortByCom[company][name] = rawJson[name].job
+	sortByCom[rawJson[name].company][name] = rawJson[name].job
 }
 </script>
 
 <template>
 	<div class="jd-page">
-		<div :class="{ 'bg-shadow': isShow }" @click="isShow = false"></div>
-		<div class="icon-wrapper" @click="isShow = true">
+		<div :class="{ 'bg-shadow': showExpand }" @click="showExpand = false"></div>
+		<div class="icon-wrapper" @click="showExpand = true">
 			<div class="expand-icon">
 				<span></span>
 				<span></span>
@@ -30,28 +28,25 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			</div>
 		</div>
 		<article>
-			<aside :class="{ aside: isShow }">
-				<div class="close" @click="isShow = false">
+			<aside :class="{ aside: showExpand }">
+				<div class="close" @click="showExpand = false">
 					<span></span>
 					<span></span>
 				</div>
 
-				<ul style="border-bottom: 1px solid var(--ct-gray);">
+				<div style="border-bottom: 1px solid var(--ct-gray);">
 					<ul v-for="(ulItem, ulName, ulKey) in sortByCom" :key="ulKey" class="sidebar-items">{{ulName}}
 						<router-link v-for="(item, name, key) in ulItem" :key="key" :to="`/jd/${name}`"
-							class="sidebar-item-link"
-							:class="{ 'sidebar-item-select-link': route.params.name === name }" @click="isShow = false">
+							class="sidebar-item-link" @click="showExpand = false">
 							<li class="sidebar-item" :class="{ 'sidebar-item-select': route.params.name === name }">
 								{{ item }}
 							</li>
 						</router-link>
 					</ul>
-				</ul>
-				<div class="btn-wrapper">
-					<btn to="/jd/search" style="flex-grow:1;">
-						查看全部 >>
-					</btn>
 				</div>
+				<btn to="/jd/search" style="flex-grow: 1; margin-top: 1.5em">
+					查看全部 >>
+				</btn>
 			</aside>
 			<section>
 				<div class="banner">
@@ -60,7 +55,7 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 						<p>欢迎您的投递与加入</p>
 					</div>
 				</div>
-				<div markdown-body v-html="rawJson[route.params.name].md" class="md-content"></div>
+				<div markdown-body v-html="rawJson[route.params.name].md" style="margin-bottom: 5em;"></div>
 				<footer class="jd-footer">
 				</footer>
 			</section>
@@ -111,7 +106,7 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 		display: flex;
 		width: 80%;
 		max-width: 120em;
-		min-width: 90em;
+		min-width: 80em;
 		margin: 0 auto 10vh;
 
 		aside {
@@ -123,38 +118,6 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			padding: 2em;
 			margin: 4em 0;
 			padding-bottom: 10em;
-
-			.btn-wrapper {
-				width: 100%;
-				display: flex;
-				margin-top: 1.5em;
-				justify-content: center;
-
-				.btn-all {
-					color: var(--ct-gray);
-					font-weight: bolder;
-					font-size: 1.2em;
-					text-decoration: none;
-					text-align: center;
-					margin-right: 1em;
-
-					.text {
-						line-height: 2em;
-						border: 1px solid var(--ct-gray-light);
-						padding: 0 2em;
-						border-radius: 0.2em;
-					}
-
-					&:hover {
-						color: var(--cf);
-
-						.text {
-							border: 1px solid var(--cf-next-next-level);
-							background-color: var(--ct-gray-light);
-						}
-					}
-				}
-			}
 
 			ul.sidebar-items {
 				list-style-type: none;
@@ -176,26 +139,21 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 					&:hover {
 						color: var(--c-brand);
 						font-weight: 540;
-
 					}
 				}
 
-				.sidebar-item-select-link {
-					.sidebar-item-select {
-						color: var(--c-brand);
-						font-weight: bolder;
-					}
+				.sidebar-item-select {
+					color: var(--c-brand);
+					font-weight: bolder;
 				}
 			}
 		}
 
-
 		section {
 			height: 100%;
-			width: calc(100% - 18em - 4em);
+			width: calc(100% - 18em);
 			border-radius: 10px;
-			padding: 2em;
-			margin: 2em 2em;
+			padding: 4em;
 
 			.banner {
 				background: no-repeat center center;
@@ -213,7 +171,6 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 					text-align: center;
 					display: flex;
 					justify-content: center;
-					align-items: center;
 					flex-direction: column;
 					color: white;
 
@@ -226,10 +183,6 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 						font-size: 2.5em;
 					}
 				}
-			}
-
-			.md-content {
-				margin-bottom: 5em;
 			}
 
 			.jd-footer {
@@ -250,8 +203,16 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			transition: all 0.5s ease 0s;
 		}
 
-		.aside {
+		.icon-wrapper {
+			width: 100%;
+			margin: 1em 1em 0;
 
+			.expand-icon {
+				display: flex;
+			}
+		}
+
+		.aside {
 			transform: translate(0);
 			transition: opacity .25s, transform .5s cubic-bezier(.19, 1, .22, 1);
 			overflow: auto;
@@ -286,23 +247,6 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			}
 		}
 
-		.icon-wrapper {
-			width: 100%;
-			margin: 1em 1em 0;
-
-			.expand-icon {
-				display: flex;
-			}
-		}
-
-		.banner {
-			font-size: 0.5em;
-
-			.text-wrapper {
-				height: 20vh;
-			}
-		}
-
 		article {
 			width: 100%;
 			min-width: 1em;
@@ -319,9 +263,9 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			}
 
 			section {
-				width: calc(100% - 2em);
+				width: 100%;
 				margin: 0 auto;
-				padding: 1em;
+				padding: 2em;
 
 				.banner {
 					font-size: 0.5em;

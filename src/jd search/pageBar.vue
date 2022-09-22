@@ -1,6 +1,4 @@
 <script setup>
-import { } from 'vue'
-
 const props = defineProps({
 	pageAll: Number,
 	currentPage: {
@@ -8,21 +6,20 @@ const props = defineProps({
 		default: 1
 	}
 })
-
 </script>
 
 <template>
 	<ul class="pagination ">
 		<li>
-			<div @click="$emit('toPage', currentPage-1)">«</div>
+			<div @click="$emit('toPage', currentPage - 1)">«</div>
 		</li>
-		<li v-for="index in Array.from({length:props.pageAll},(_, i)=>1+(i))" @click="" :key="index">
-			<div @click="$emit('toPage', index)" :class="{'active':index==props.currentPage}">
+		<li v-for="index in Array.from({length: props.pageAll}, (_, i) => 1 + i)" :key="index">
+			<div @click="$emit('toPage', index)" :class="{'active':index === props.currentPage}">
 				{{index}}
 			</div>
 		</li>
 		<li>
-			<div @click="$emit('toPage', currentPage+1)">»</div>
+			<div @click="$emit('toPage', currentPage + 1)">»</div>
 		</li>
 	</ul>
 </template>
@@ -41,8 +38,6 @@ ul.pagination li {
 }
 
 ul.pagination li div {
-	// color: black;
-	float: left;
 	padding: 0.5em 1em;
 	text-decoration: none;
 	transition: background-color .3s;

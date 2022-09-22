@@ -8,7 +8,7 @@ import { router } from './router'
 import { createPinia } from 'pinia'
 import * as componentList from './common.js'
 const Vue = createApp(App)
-Vue.use(router)
+	.use(router)
 	.use(createPinia())
 Object
 	.entries(componentList)

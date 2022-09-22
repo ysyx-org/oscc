@@ -6,43 +6,43 @@ import ysyx from './home/intro/ysyx.vue'
 import rawJson from 'mdDir'
 
 const
+	showLogoNum = 3,
 	bannerArr = [
 		{
-			logo: new URL('./assets/ysyx.png', import.meta.url).href,
+			logo: new URL('./assets/logo_xin.png', import.meta.url).href,
 			component: oscc,
 		},
 		{
-			logo: new URL('./assets/ysyx-square.png', import.meta.url).href,
-			component: ysyx,
-		},
-		{
-			logo: new URL('./assets/ysyx.png', import.meta.url).href,
-			component: oscc,
-		},
-		{
-			logo: new URL('./assets/ysyx-square.png', import.meta.url).href,
+			logo: new URL('./assets/logo_ysyx-square.png', import.meta.url).href,
 			component: ysyx,
 		},
 	],
 	currentBan = ref(0),
-	showPerBar = 3,
-	[showAverFloor, showAverCeil] = [Math.floor(showPerBar / 2), Math.ceil(showPerBar / 2)],
-	showArr = computed(() => {
-		if (currentBan.value > bannerArr.length - showAverCeil || currentBan.value < showAverFloor) {
-			return [...bannerArr.slice(currentBan.value - showAverFloor), ...bannerArr.slice(0, (currentBan.value + showAverCeil) % bannerArr.length)]
+	showAverFloor = Math.floor(showLogoNum / 2),
+	showLogoArr = computed(() => {
+		const tmpArr = [(currentBan.value + showAverFloor) % bannerArr.length]
+		for (let i = 1; i < showLogoNum; i++) {
+			tmpArr.unshift((tmpArr[0] - 1 + bannerArr.length) % bannerArr.length)
 		}
-		return [...bannerArr.slice(currentBan.value - showAverFloor, currentBan.value + showAverCeil)]
+		return tmpArr
 	}),
+	enterTrans = ref(null),
+	leaveTrans = ref(null),
+	clickLogo = (key) => {
+		currentBan.value = (key + bannerArr.length + currentBan.value - showAverFloor) % bannerArr.length
+		enterTrans.value = `translateX(${(key > showAverFloor) ? '' : '-'}50%)`
+		leaveTrans.value = `translateX(${(key < showAverFloor) ? '' : '-'}50%)`
+	},
 	showJd = []
-
-for (const name of Object.getOwnPropertyNames(rawJson)) {
+// select jd show in home page
+for (const name in rawJson) {
 	if (rawJson[name]?.showInHome) {
 		showJd.push({
 			name,
 			logo: rawJson[name].logo,
 			company: rawJson[name].company,
 			job: rawJson[name].job,
-			text: rawJson[name].text,
+			subtitle: rawJson[name].subtitle,
 		})
 	}
 }
@@ -51,33 +51,31 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 <template>
 	<div class="home-page">
 		<div class="banner-container">
-			<intro>
-				<TransitionGroup name="list">
-					<div class="intro-wrapper" v-for="(item,key) in bannerArr" :key="key" v-show="currentBan === key">
-						<component :is="item.component"></component>
-					</div>
-				</TransitionGroup>
-			</intro>
+			<Transition name="banner" mode="out-in">
+				<intro :key="currentBan">
+					<component :is="bannerArr[currentBan].component"></component>
+				</intro>
+			</Transition>
 			<div class="outer-container">
 				<div class="inner-container">
-					<div class="img-wrapper" v-for="(item, key) in showArr" :key="key"
-						:class="{ imgWrapperSelect: key === Math.floor(showPerBar / 2) }"
-						@click="currentBan = (key + bannerArr.length + currentBan - Math.floor(showPerBar / 2)) % bannerArr.length">
-						<img :src="item.logo" alt="logo" :class="{ imgSelect: key === Math.floor(showPerBar / 2) }">
+					<div class="img-wrapper" v-for="(item, key) in showLogoArr" :key="key"
+						:class="{ imgWrapperSelect: key === showAverFloor }" @click="clickLogo(key)">
+						<img :src="bannerArr[item].logo" alt="logo" :class="{ imgSelect: key === showAverFloor }">
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="jd-container">
-			<h1 style="text-align: center;width: 100%;margin-bottom: 1em;">招聘信息 JD </h1>
+			<h1 style="text-align: center; width: 100%; margin-bottom: 1em;">招聘信息 JD </h1>
 			<div class="jd-content-wrapper">
-				<router-link v-for="(el, i) in showJd" :key="i" :to="`/jd/${el.name}`" class="jd-content">
-					<v-card direction="row" class="jd-card">
+				<router-link v-for="(el, key) in showJd" :key="key" :to="`/jd/${el.name}`" class="jd-content">
+					<v-card class="jd-card">
 						<img :src="el.logo" alt="logo" class="jd-card-img">
 						<div style="margin: auto 0 auto 2em;">
-							<h2 style="line-height: 1.25em; margin-bottom: 0.5em;">{{ `${el?.company} - ${el?.job}` }}</h2>
-							<p style="line-height: 1.25em;">{{ el?.text }}</p>
+							<h2 style="line-height: 1.25em; margin-bottom: 0.5em;">{{ `${el?.company} - ${el?.job}` }}
+							</h2>
+							<p style="line-height: 1.25em;">{{ el?.subtitle }}</p>
 						</div>
 					</v-card>
 				</router-link>
@@ -117,65 +115,53 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 		padding-bottom: 4em;
 		border-bottom: 1px solid var(--cb-gray);
 
-		.list-move,
-		.list-enter-active,
-		.list-leave-active {
-			transition: all .5s ease;
+		.banner-enter-active,
+		.banner-leave-active {
+			transition: all .3s ease;
 		}
 
-		.list-enter-from,
-		.list-leave-to {
+		.banner-enter-from {
 			opacity: 0;
-			transform: translateX(-100%);
+			transform: v-bind('enterTrans');
 		}
 
-		.list-leave-from,
-		.list-leave-to,
-		.list-leave-active {
-			position: absolute;
-			top: 0;
+		.banner-leave-to {
+			opacity: 0;
+			transform: v-bind('leaveTrans');
 		}
 
-
-		// 滑动框高度与宽
-		$scrollWidth: 4em;
-		$scrollHeight : 6em;
-		$marginLeft: 1em;
+		$imgWrapperWidth: 4em;
+		$imgWrapperHeight : $imgWrapperWidth * 2;
 
 		.outer-container {
 			position: relative;
 			overflow: hidden;
-			width: v-bind('`${6 * showPerBar}em`');
-			height: $scrollHeight+ 4em;
+			width: v-bind('`${5 * (showLogoNum + 0.75)}em`');
+			height: $imgWrapperHeight;
 			margin: 0 auto;
 
 			.inner-container {
 				display: flex;
-				position: absolute;
-				flex-direction: row;
-				width: 100%;
 				overflow-x: scroll;
 				overflow-y: hidden;
-				justify-content: center;
 
 				&::-webkit-scrollbar {
 					display: none;
 				}
 
 				.img-wrapper {
-					width: $scrollWidth + 0.5em;
-					height: $scrollHeight+ 4em;
-					position: relative;
+					width: $imgWrapperWidth;
+					margin: 0 0.5em;
+					height: $imgWrapperHeight;
 					border-radius: 0.5em;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 
 					img {
-						width: $scrollWidth ;
-						height: $scrollHeight - 2em;
+						width: $imgWrapperWidth ;
+						height: $imgWrapperWidth;
 						object-fit: contain;
-						display: block;
 						border-radius: 0.5em;
 						opacity: 0.4;
 						filter: grayscale(1);
@@ -183,25 +169,24 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 						cursor: pointer;
 					}
 
-					img.imgSelect {
-						box-shadow: 0 0 0.25em var(--cb-gray-dark);
-						opacity: 1;
-						filter: grayscale(0);
-						transform: scale(2);
-					}
-
 					&:hover {
 
 						img:not(.imgSelect) {
-							z-index: 2;
-							transform: scale(1.1);
 							opacity: 0.8;
+							filter: grayscale(0);
 						}
 					}
 				}
 
 				.imgWrapperSelect {
-					width: 13em;
+					transform: scale(1.75);
+					flex: auto;
+
+					.imgSelect {
+						box-shadow: 0 0 0.25em var(--cb-gray-dark);
+						opacity: 1;
+						filter: grayscale(0);
+					}
 				}
 			}
 		}
@@ -216,7 +201,6 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 
 		.btn-wrapper {
 			width: 100%;
-			height: auto;
 			display: flex;
 			margin-right: 0.64em;
 			justify-content: right;
@@ -228,17 +212,14 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 			max-width: 80em;
 			display: flex;
 			flex-wrap: wrap;
-			justify-content: center;
 
 			.jd-content {
-				width: calc((100% - 4em) / 2);
+				width: 50%;
 				text-decoration: none;
 				color: var(--ct);
-				word-wrap: break-word;
-				margin: 1em;
+				padding: 1em;
 
 				.jd-card {
-					width: 100%;
 					height: 100%;
 					padding: 2em;
 
@@ -256,50 +237,43 @@ for (const name of Object.getOwnPropertyNames(rawJson)) {
 		font-size: 0.75rem;
 
 		.banner-container {
-			$scrollWidth: 3em;
-			$scrollHeight: 5em;
-			$marginLeft: 0.75em;
 			padding-top: 0em;
 
+			$imgWrapperWidth: 3em;
+			$imgWrapperHeight: $imgWrapperWidth * 2;
+
 			.outer-container {
-				width: v-bind('`${6 * showPerBar}em`');
-				height: $scrollHeight+4em;
+				width: v-bind('`${4 * (showLogoNum + 0.75)}em`');
+				height: $imgWrapperHeight;
 
 				.inner-container .img-wrapper {
-					width: $scrollWidth + 0.5em;
-					height: $scrollHeight+ 4em;
+					width: $imgWrapperWidth;
+					height: $imgWrapperHeight;
 
 					img {
-						width: $scrollWidth;
-						height: $scrollHeight - 2em;
+						width: $imgWrapperWidth;
+						height: $imgWrapperWidth;
 						border-radius: 0.2em;
 					}
-				}
-
-				.inner-container .imgWrapperSelect {
-					width: 8em;
 				}
 			}
 		}
 
 		.jd-container {
 			.btn-wrapper {
-				width: 100%;
 				margin: 1em auto;
 				justify-content: center;
-				flex-grow: 1;
 			}
 
 			.jd-content-wrapper {
-				width: 100%;
-				padding: 1.5em;
+				width: 90%;
 				min-width: 20em;
+				max-width: 60em;
 
 				.jd-content {
-					width: 90%;
-					min-width: 0em;
-					padding: 0.5em;
-					margin: 0.2em;
+					width: 100%;
+					min-width: none;
+					padding: 0.75em;
 
 					.jd-card {
 						padding: 1em;

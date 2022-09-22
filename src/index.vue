@@ -18,7 +18,7 @@ router.beforeResolve((to, from, next) => {
 </script>
 
 <template>
-	<v-header :loading="loading"> //bg-color="hsl(240, 100%, 7%)"
+	<v-header :loading="loading">
 		<template #title>
 			<svg alt="OSCC logo" class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432.18 200">
 				<g>

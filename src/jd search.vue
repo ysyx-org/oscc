@@ -7,56 +7,66 @@ const
 	showFilter = ref(true),
 	currentPage = ref(1),
 	itemPerPage = 6,
-	pageAllArr = [],
-	filterItem = {
-		company: [],
-		job: [],
-		vModelCompany: [],
-		vModelJob: []
-	}
+	categories = { 'company': '公司', 'job': '职业' },
+	itemAllArr = [],
+	uniqueCategory = {}
 
+for (const item in categories) {
+	uniqueCategory[item] = {
+		name: [],
+		vModel: []
+	}
+}
 for (const name in rawJson) {
-	pageAllArr.push({
+	// base add in itemAllArr
+	const tmpObj = {
 		name,
 		company: rawJson[name].company,
 		job: rawJson[name].job,
 		logo: rawJson[name].logo,
-		text: rawJson[name].text
-	})
-	if (!(filterItem.company.includes(pageAllArr[pageAllArr.length - 1].company))) {
-		filterItem.company.push(pageAllArr[pageAllArr.length - 1].company)
-		filterItem.vModelCompany.push(ref(false))
+		subtitle: rawJson[name].subtitle
 	}
-	if (!(filterItem.job.includes(pageAllArr[pageAllArr.length - 1].job))) {
-		filterItem.job.push(pageAllArr[pageAllArr.length - 1].job)
-		filterItem.vModelJob.push(ref(false))
+	for (const item in categories) {
+		// extra add in itemAllArr
+		if (!(item in tmpObj)) {
+			tmpObj[item] = rawJson[name][item]
+		}
+		// de-duplicate
+		if (!(uniqueCategory[item].name.includes(rawJson[name][item]))) {
+			uniqueCategory[item].name.push(rawJson[name][item])
+			uniqueCategory[item].vModel.push(ref(false))
+		}
 	}
+	itemAllArr.push(tmpObj)
 }
-
 const
-	pageFilterArr = computed(() => {
+	itemAfterFilter = computed(() => {
+		// return to page 1 when filter
 		currentPage.value = 1
-		return pageAllArr.filter((item) => {
-			return (filterItem.vModelCompany.every(item => !item.value) || filterItem.company.filter((_, i) => {
-				return filterItem.vModelCompany[i].value
-			}).includes(item.company)) &&
-				(filterItem.vModelJob.every(item => !item.value) || filterItem.job.filter((_, i) => {
-					return filterItem.vModelJob[i].value
-				}).includes(item.job))
+		// filter items in itemAllArr
+		return itemAllArr.filter((item) => {
+			// check every category
+			return Object.keys(categories).reduce((prev, cur) => {
+				// if none is selected or the category items include itemAllArr item
+				return (uniqueCategory[cur].vModel.every(item => !item.value) || uniqueCategory[cur].name.filter((_, i) => {
+					return uniqueCategory[cur].vModel[i].value
+				}).includes(item[cur])) && prev
+			}, true)
 		})
 	}),
 
-	pageAll = computed(() => Math.ceil(pageFilterArr.value.length / itemPerPage)),
+	pages = computed(() => Math.ceil(itemAfterFilter.value.length / itemPerPage)),
 
-	toPage = (n) => {
-		if (n >= 1 && n <= pageAll.value) {
+	toPage = n => {
+		if (n >= 1 && n <= pages.value) {
 			currentPage.value = n
 		}
 	},
 
 	clear = () => {
-		filterItem.vModelCompany.map(i => i.value = false)
-		filterItem.vModelJob.map(i => i.value = false)
+		for (const item in categories) {
+			uniqueCategory[item].vModel.map(i => i.value = false)
+		}
 	}
 </script>
 
@@ -64,29 +74,16 @@ const
 	<div>
 		<div :class="{'bg-shadow':!showFilter}" @click="showFilter=true"></div>
 		<main>
-			<!-- <div class="search">
-                <h1>找到你的理想职位</h1>
-                <input type="text" class="searchview" placeholder="按职位或关键词搜索">
-            </div> -->
 			<div class="row">
 				<button class="option" @click="showFilter=!showFilter">筛选条件</button>
 				<button class="clear" @click="clear">全部清除</button>
 			</div>
-			<div class="fr-container">
+			<div class="filter-res-container">
 				<div class="filter">
-					<div class="checkboxs">
-						<h2 style="line-height: 2em;">公司</h2>
-						<label class="box" v-for="(item, key) in filterItem.company" :key="key">
-							<input type="checkbox" name="com" class="checkbox"
-								v-model="filterItem.vModelCompany[key].value">
-							<span>{{item}}</span>
-						</label>
-					</div>
-					<div class="checkboxs">
-						<h2 style="line-height: 2em;">职位</h2>
-						<label class="box" v-for="(item, key) in filterItem.job" :key="key">
-							<input type="checkbox" name="job" class="checkbox"
-								v-model="filterItem.vModelJob[key].value">
+					<div class="checkboxs" v-for="(alias, category, key) in categories" :key="key">
+						<h2 style="line-height: 2em;">{{alias}}</h2>
+						<label class="box" v-for="(item, key) in uniqueCategory[category].name" :key="key">
+							<input type="checkbox" v-model="uniqueCategory[category].vModel[key].value">
 							<span>{{item}}</span>
 						</label>
 					</div>
@@ -94,18 +91,18 @@ const
 				</div>
 				<div class="results">
 					<router-link
-						v-for="(el, i) in pageFilterArr.slice((currentPage-1)*itemPerPage,(currentPage)*itemPerPage)"
+						v-for="(el, i) in itemAfterFilter.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage)"
 						:key="i" :to="`/jd/${el.name}`" class="jd-content">
-						<v-card direction="row" bg-color="var(--cf)" class="jd-card">
+						<v-card bg-color="var(--cf)" class="jd-card">
 							<img :src="el.logo" alt="logo" class="jd-card-img">
 							<div style="margin: auto 0 auto 2em;">
-								<h2 style="line-height: 1.25em; margin-bottom: 0.5em;">{{ `${el.company} ${el.job}` }}
+								<h2 style="line-height: 1.25em; margin-bottom: 0.5em;">{{`${el.company} ${el.job}`}}
 								</h2>
-								<p style="line-height: 1.25em;">{{ el?.text }}</p>
+								<p style="line-height: 1.25em;">{{ el?.subtitle }}</p>
 							</div>
 						</v-card>
 					</router-link>
-					<page-bar class="page-bar" :page-all="pageAll" :current-page="currentPage" @to-page="toPage">
+					<page-bar class="page-bar" :page-all="pages" :current-page="currentPage" @to-page="toPage">
 					</page-bar>
 				</div>
 			</div>
@@ -121,35 +118,6 @@ main {
 	width: 80%;
 	max-width: 80em;
 
-	.search {
-		margin: 0 auto 2em;
-		width: 60%;
-
-		h1 {
-			text-align: center;
-			padding: 1em 0;
-		}
-
-		input {
-			width: 100%;
-			font-size: 1.5em;
-			height: 3em;
-		}
-
-		.searchview {
-			background: 30px center no-repeat #f8f8f8;
-			background-image: url(https://jobs.apple.com/static/images/search-grey.svg), none;
-			-moz-background-size: 35px 35px;
-			background-size: 35px 35px;
-			-moz-border-radius: 4px;
-			border-radius: 4px;
-			padding: 0 2em 0 3.5em;
-			-webkit-transition: border .2s;
-			-moz-transition: border .2s;
-			transition: border .2s;
-		}
-	}
-
 	.row {
 		margin: 0 auto 0.5em;
 		width: 100%;
@@ -158,15 +126,15 @@ main {
 			border: none;
 			text-align: left;
 			cursor: pointer;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
 		.option {
 			margin-right: 2em;
 			color: var(--c-brand-light);
-
-			&:hover {
-				text-decoration: underline;
-			}
 		}
 
 		.clear {
@@ -174,14 +142,10 @@ main {
 			text-align: right;
 			padding-left: 2em;
 			color: var(--c-brand-light);
-
-			&:hover {
-				text-decoration: underline;
-			}
 		}
 	}
 
-	.fr-container {
+	.filter-res-container {
 		display: flex;
 		border-top: 1px solid var(--cb-gray);
 
@@ -224,25 +188,20 @@ main {
 			.jd-content {
 				text-decoration: none;
 				color: var(--ct);
-				word-wrap: break-word;
 
 				.jd-card {
-					width: 100%;
-					height: 10em;
 					padding: 2em 2em 2em 4em;
-					border-radius: 0;
 					border-bottom: 1px solid var(--cb-gray);
+					border-radius: 0;
 
 					&-img {
 						width: 5em;
 					}
 				}
-
 			}
 
 			.page-bar {
-				margin: 2em auto;
-				width: auto;
+				margin-top: 2em;
 				display: flex;
 				justify-content: center;
 			}
@@ -256,7 +215,7 @@ main {
 		width: 90%;
 		margin: 3em auto;
 
-		.fr-container .filter {
+		.filter-res-container .filter {
 			display: v-bind('!showFilter?"block":"none"');
 			position: fixed;
 			height: 100%;
@@ -277,7 +236,7 @@ main {
 			}
 		}
 
-		.fr-container .results {
+		.filter-res-container .results {
 			width: 100%;
 
 			.jd-content .jd-card {
