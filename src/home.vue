@@ -80,7 +80,7 @@ for (const name in rawJson) {
 					</v-card>
 				</router-link>
 				<div class="btn-wrapper">
-					<btn to="/research/search" style="width: 15em;">
+					<btn to="/research" style="width: 15em;">
 						查看全部 >>
 					</btn>
 				</div>

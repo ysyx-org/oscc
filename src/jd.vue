@@ -44,7 +44,7 @@ for (const name in rawJson) {
 						</router-link>
 					</ul>
 				</div>
-				<btn to="/research/search" style="flex-grow: 1; margin-top: 1.5em">
+				<btn to="/research" style="flex-grow: 1; margin-top: 1.5em">
 					查看全部 >>
 				</btn>
 			</aside>
