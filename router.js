@@ -18,12 +18,26 @@ export const routes = [
 			title: to => `${/^\d+$/g.test(to.params.code) && to.params.code || '404'} | 一生一芯计划`
 		},
 		component: () => import('@CC/StatusCode.vue')
+	}, {
+		path: '/jd/:name',
+		name: 'jd',
+		component: () => import('./src/jd.vue')
+	}, {
+		path: '/jd/search',
+		component: () => import('./src/jd search.vue')
 	}
 ]
 
 export const router = createRouter({
 	history: createWebHistory(),
-	routes
+	routes,
+	scrollBehavior(to, from, savedPosition) {
+		if (savedPosition) {
+			return savedPosition
+		} else {
+			return { top: 0 }
+		}
+	},
 })
 
 router.afterEach(to => {
