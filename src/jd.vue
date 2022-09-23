@@ -36,7 +36,7 @@ for (const name in rawJson) {
 
 				<div style="border-bottom: 1px solid var(--ct-gray);">
 					<ul v-for="(ulItem, ulName, ulKey) in sortByCom" :key="ulKey" class="sidebar-items">{{ulName}}
-						<router-link v-for="(item, name, key) in ulItem" :key="key" :to="`/jd/${name}`"
+						<router-link v-for="(item, name, key) in ulItem" :key="key" :to="`/research/${name}`"
 							class="sidebar-item-link" @click="showExpand = false">
 							<li class="sidebar-item" :class="{ 'sidebar-item-select': route.params.name === name }">
 								{{ item }}
@@ -44,7 +44,7 @@ for (const name in rawJson) {
 						</router-link>
 					</ul>
 				</div>
-				<btn to="/jd/search" style="flex-grow: 1; margin-top: 1.5em">
+				<btn to="/research/search" style="flex-grow: 1; margin-top: 1.5em">
 					查看全部 >>
 				</btn>
 			</aside>

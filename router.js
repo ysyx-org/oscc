@@ -19,11 +19,11 @@ export const routes = [
 		},
 		component: () => import('@CC/StatusCode.vue')
 	}, {
-		path: '/jd/:name',
+		path: '/research/:name',
 		name: 'jd',
 		component: () => import('./src/jd.vue')
 	}, {
-		path: '/jd/search',
+		path: '/research/search',
 		component: () => import('./src/jd search.vue')
 	}
 ]

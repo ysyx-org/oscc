@@ -69,7 +69,7 @@ for (const name in rawJson) {
 		<div class="jd-container">
 			<h1 style="text-align: center; width: 100%; margin-bottom: 1em;">招聘信息 JD </h1>
 			<div class="jd-content-wrapper">
-				<router-link v-for="(el, key) in showJd" :key="key" :to="`/jd/${el.name}`" class="jd-content">
+				<router-link v-for="(el, key) in showJd" :key="key" :to="`/research/${el.name}`" class="jd-content">
 					<v-card class="jd-card">
 						<img :src="el.logo" alt="logo" class="jd-card-img">
 						<div style="margin: auto 0 auto 2em;">
@@ -80,7 +80,7 @@ for (const name in rawJson) {
 					</v-card>
 				</router-link>
 				<div class="btn-wrapper">
-					<btn to="/jd/search" style="width: 15em;">
+					<btn to="/research/search" style="width: 15em;">
 						查看全部 >>
 					</btn>
 				</div>

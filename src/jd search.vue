@@ -92,7 +92,7 @@ const
 				<div class="results">
 					<router-link
 						v-for="(el, i) in itemAfterFilter.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage)"
-						:key="i" :to="`/jd/${el.name}`" class="jd-content">
+						:key="i" :to="`/research/${el.name}`" class="jd-content">
 						<v-card bg-color="var(--cf)" class="jd-card">
 							<img :src="el.logo" alt="logo" class="jd-card-img">
 							<div style="margin: auto 0 auto 2em;">
