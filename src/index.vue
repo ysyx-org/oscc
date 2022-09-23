@@ -33,6 +33,7 @@ router.beforeResolve((to, from, next) => {
 		</template>
 		<template #nav>
 			<nav-link class="nav-links" to="/" title="主页"><i class="fa fa-home"></i>主页 </nav-link>
+			<nav-link class="nav-links" to="/research" title="招聘信息">招聘信息</nav-link>
 		</template>
 	</v-header>
 

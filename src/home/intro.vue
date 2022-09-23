@@ -24,9 +24,9 @@
 
 	:deep(.right) {
 		width: 50%;
+		height: 100%;
 		padding: 2em;
 		display: flex;
-		justify-content: center;
 	}
 }
 
@@ -41,7 +41,7 @@
 
 		:deep(.left) {
 			width: 100%;
-			height: 70%;
+			height: 60%;
 			text-align: center;
 			padding: 0;
 			display: flex;
@@ -52,8 +52,9 @@
 
 		:deep(.right) {
 			width: 100%;
-			height: 30%;
+			height: 40%;
 			padding: 0;
+			justify-content: center;
 		}
 	}
 }

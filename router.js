@@ -20,11 +20,10 @@ export const routes = [
 		component: () => import('@CC/StatusCode.vue')
 	}, {
 		path: '/research/:name',
-		name: 'jd',
-		component: () => import('./src/jd.vue')
+		component: () => import('./src/jd_detail.vue')
 	}, {
 		path: '/research',
-		component: () => import('./src/jd search.vue')
+		component: () => import('./src/jd_search.vue')
 	}
 ]
 

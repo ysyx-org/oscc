@@ -80,7 +80,7 @@ for (const name in rawJson) {
 					</v-card>
 				</router-link>
 				<div class="btn-wrapper">
-					<btn to="/research" style="width: 15em;">
+					<btn to="/research" style="width: 15em; margin-right: 0;">
 						查看全部 >>
 					</btn>
 				</div>
@@ -202,7 +202,7 @@ for (const name in rawJson) {
 		.btn-wrapper {
 			width: 100%;
 			display: flex;
-			margin-right: 0.64em;
+			padding-right: 1em;
 			justify-content: right;
 		}
 

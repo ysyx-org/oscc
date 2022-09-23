@@ -42,9 +42,19 @@ export default function (dir) {
 		},
 		load(id) {
 			if (id === resolvedMdModuleId) {
-				const mdObj = initMdObj(dir)
+				const
+					mdObj = initMdObj(dir),
+					reg = /src="(\/src\/assets\/md\/.*?)"/g
 				return {
-					code: `export default ${JSON.stringify(mdObj)};`,
+					code: `
+					const mdObj = ${JSON.stringify(mdObj)}
+					for(const name in mdObj){
+						mdObj[name].banner = import.meta.globEager("/src/assets/*")[mdObj[name].banner]?.default
+						mdObj[name].logo = import.meta.globEager("/src/assets/*")[mdObj[name].logo]?.default
+						mdObj[name].md = mdObj[name].md.replace(${reg}, (_, c) => \`src="\${import.meta.globEager("/src/assets/md/*")[c]?.default}"\`)
+					}
+					export default mdObj;
+					`,
 					map: null
 				}
 			}

@@ -177,7 +177,7 @@ main {
 
 			.filter-btn {
 				display: none;
-				margin: 2em;
+				margin: 2em 1em;
 				text-align: center;
 			}
 		}
