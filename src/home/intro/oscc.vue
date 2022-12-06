@@ -8,7 +8,7 @@ const { host } = location
 		<h2>Open Source Chip Community</h2>
 		<container sub-site-list flex-row flex-wrap>
 			<btn type="solid gray" :to="`/redirect/to/ysyx.${host}`">一生一芯计划</btn>
-			<btn type="solid gray" :to="`/redirect/to/ieda.${host}`">开源EDA</btn>
+			<btn type="solid gray disabled">开源EDA</btn>
 			<btn type="solid gray disabled"> 在线设计平台 </btn>
 		</container>
 	</div>

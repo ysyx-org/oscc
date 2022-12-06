@@ -1,20 +1,27 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onBeforeUpdate } from 'vue'
+import { useRoute, } from 'vue-router'
 import rawJson from 'mdDir'
 
 const
 	route = useRoute(),
 	showExpand = ref(false),
-	bgImg = computed(() => `url(${rawJson[route.params.name].banner})`),
 	sortByCom = {}
 
 for (const name in rawJson) {
 	if (!(rawJson[name].company in sortByCom)) {
 		sortByCom[rawJson[name].company] = {}
 	}
-	sortByCom[rawJson[name].company][name] = rawJson[name].job
+	sortByCom[rawJson[name].company][name] = rawJson[name].subtitle
 }
+if (!route.params?.name) {
+	route.params.name = Object.keys(rawJson)[0]
+}
+onBeforeUpdate(() => {
+	if (!route.params?.name) {
+		route.params.name = Object.keys(rawJson)[0]
+	}
+})
 </script>
 
 <template>
@@ -35,7 +42,7 @@ for (const name in rawJson) {
 				</div>
 
 				<div style="border-bottom: 1px solid var(--ct-gray);">
-					<ul v-for="(ulItem, ulName, ulKey) in sortByCom" :key="ulKey" class="sidebar-items">{{ulName}}
+					<ul v-for="(ulItem, ulName, ulKey) in sortByCom" :key="ulKey" class="sidebar-items">{{ ulName }}
 						<router-link v-for="(item, name, key) in ulItem" :key="key" :to="`/research/${name}`"
 							class="sidebar-item-link" @click="showExpand = false">
 							<li class="sidebar-item" :class="{ 'sidebar-item-select': route.params.name === name }">
@@ -44,18 +51,9 @@ for (const name in rawJson) {
 						</router-link>
 					</ul>
 				</div>
-				<btn to="/research" style="flex-grow: 1; margin-top: 1.5em">
-					查看全部 >>
-				</btn>
 			</aside>
 			<section>
-				<div class="banner">
-					<div class="text-wrapper">
-						<h1>{{`${rawJson[route.params.name].company} - ${rawJson[route.params.name].job}`}}</h1>
-						<p>欢迎您的投递与加入</p>
-					</div>
-				</div>
-				<div markdown-body v-html="rawJson[route.params.name].md" style="margin-bottom: 5em;"></div>
+				<div markdown-body v-html="rawJson[route.params?.name]?.md" style="margin-bottom: 5em;"></div>
 				<footer class="jd-footer">
 				</footer>
 			</section>
@@ -107,7 +105,7 @@ for (const name in rawJson) {
 		width: 80%;
 		max-width: 120em;
 		min-width: 80em;
-		margin: 0 auto 10vh;
+		margin: 0 auto 3vh;
 
 		aside {
 			width: 18em;
@@ -121,7 +119,7 @@ for (const name in rawJson) {
 
 			ul.sidebar-items {
 				list-style-type: none;
-				font-size: 1.5em;
+				font-size: 1.2em;
 				font-weight: bolder;
 
 				.sidebar-item-link {
@@ -154,36 +152,6 @@ for (const name in rawJson) {
 			width: calc(100% - 18em);
 			border-radius: 10px;
 			padding: 4em;
-
-			.banner {
-				background: no-repeat center center;
-				background-size: cover;
-				background-color: var(--cf-gray);
-				border-radius: 10px;
-				background-image: v-bind('bgImg');
-
-				.text-wrapper {
-					width: 90%;
-					min-width: 20em;
-					max-width: 60em;
-					height: 40vh;
-					margin: 0 auto 3em;
-					text-align: center;
-					display: flex;
-					justify-content: center;
-					flex-direction: column;
-					color: white;
-
-					h1 {
-						color: white;
-						font-size: 5em;
-					}
-
-					p {
-						font-size: 2.5em;
-					}
-				}
-			}
 
 			.jd-footer {
 				padding-bottom: 1em;
@@ -266,14 +234,6 @@ for (const name in rawJson) {
 				width: 100%;
 				margin: 0 auto;
 				padding: 2em;
-
-				.banner {
-					font-size: 0.5em;
-
-					.text-wrapper {
-						height: 20vh;
-					}
-				}
 			}
 		}
 	}

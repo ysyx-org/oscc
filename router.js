@@ -23,7 +23,7 @@ export const routes = [
 		component: () => import('./src/jd_detail.vue')
 	}, {
 		path: '/research',
-		component: () => import('./src/jd_search.vue')
+		component: () => import('./src/jd_detail.vue')
 	}
 ]
 
